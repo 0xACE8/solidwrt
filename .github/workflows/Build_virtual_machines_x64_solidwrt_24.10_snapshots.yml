@@ -210,7 +210,7 @@ jobs:
         sudo -E apt -yqq install zip rename dos2unix libfuse-dev
         sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'
         sudo -E apt -yqq install cargo
-        rustup target add aarch64-unknown-linux-musl
+        rustup target add amd64-unknown-linux-musl
         sudo -E systemctl daemon-reload
         sudo timedatectl set-timezone "$TZ"
         sudo chown $USER:$GROUPS $GITHUB_WORKSPACE
@@ -235,7 +235,7 @@ jobs:
       uses: HiGarfield/cachewrtbuild@main
       with:
         ccache: true
-        mixkey: BCM2710-[${{ env.SOURCE_CODE }}]-[${{ secrets.REPO_IMMORTALWRT_2410SS_TREE }}]-[${{ secrets.REPO_IMMORTALWRT_2410SS_HEAD }}]-[${{ env.KERNEL_VERS }}]
+        mixkey: AMD64-[${{ env.SOURCE_CODE }}]-[${{ secrets.REPO_IMMORTALWRT_2410SS_TREE }}]-[${{ secrets.REPO_IMMORTALWRT_2410SS_HEAD }}]-[${{ env.KERNEL_VERS }}]
         prefix: ${{ github.workspace }}/openwrt
 
     - name: Update & Install Feeds (フィードの更新とインストール)
