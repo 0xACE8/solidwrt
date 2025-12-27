@@ -210,7 +210,7 @@ jobs:
         sudo -E apt -yqq install zip rename dos2unix libfuse-dev
         sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'
         sudo -E apt -yqq install cargo
-        rustup target add amd64-unknown-linux-musl
+        rustup target add x86_64-unknown-linux-musl
         sudo -E systemctl daemon-reload
         sudo timedatectl set-timezone "$TZ"
         sudo chown $USER:$GROUPS $GITHUB_WORKSPACE
