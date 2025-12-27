@@ -235,7 +235,7 @@ jobs:
       uses: HiGarfield/cachewrtbuild@main
       with:
         ccache: true
-        mixkey: AMD64-[${{ env.SOURCE_CODE }}]-[${{ secrets.REPO_IMMORTALWRT_2410SS_TREE }}]-[${{ secrets.REPO_IMMORTALWRT_2410SS_HEAD }}]-[${{ env.KERNEL_VERS }}]
+        mixkey: X86_64-[${{ env.SOURCE_CODE }}]-[${{ secrets.REPO_IMMORTALWRT_2410SS_TREE }}]-[${{ secrets.REPO_IMMORTALWRT_2410SS_HEAD }}]-[${{ env.KERNEL_VERS }}]
         prefix: ${{ github.workspace }}/openwrt
 
     - name: Update & Install Feeds (フィードの更新とインストール)
@@ -254,11 +254,10 @@ jobs:
       id: loadconfig
       run: |
         ${{ secrets.VIRTUAL_MACHINES_X64_IMWRT2410SS_PROFILE }}
+        sed '/cpulimit/d' .config
         rm -rf files
         ${{ secrets.REPO_IMMORTALWRT_2410SS_DIFF }}
-        echo "done1"
         ${{ secrets.ARGON_THEME_VMX64 }}
-        echo "done2"
 
     - name: Restore Config Archive (設定アーカイブの復元)
       if: steps.loadconfig.outcome == 'success' && (github.event.inputs.restore_config == 'true' || contains(github.event.action, 'restore_config')) && !cancelled()
