@@ -256,7 +256,9 @@ jobs:
         ${{ secrets.VIRTUAL_MACHINES_X64_IMWRT2410SS_PROFILE }}
         rm -rf files
         ${{ secrets.REPO_IMMORTALWRT_2410SS_DIFF }}
+        echo "done1"
         ${{ secrets.ARGON_THEME_VMX64 }}
+        echo "done2"
 
     - name: Restore Config Archive (設定アーカイブの復元)
       if: steps.loadconfig.outcome == 'success' && (github.event.inputs.restore_config == 'true' || contains(github.event.action, 'restore_config')) && !cancelled()
