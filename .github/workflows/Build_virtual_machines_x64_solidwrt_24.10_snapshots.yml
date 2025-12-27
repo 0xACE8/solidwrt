@@ -35,38 +35,38 @@ on:
 
 env:
   # solidwrt 2410
-  REPO_IMMORTALWRT_SOURCE_LINK:         ${{ secrets.REPO_IMMORTALWRT_SOURCE_LINK }}
-  REPO_IMMORTALWRT_2410SS_TREE:         ${{ secrets.REPO_IMMORTALWRT_2410SS_TREE }}
-  REPO_IMMORTALWRT_2410SS_HEAD:         ${{ secrets.REPO_IMMORTALWRT_2410SS_HEAD }}
-  REPO_IMMORTALWRT_2410SS_DIFF:         ${{ secrets.REPO_IMMORTALWRT_2410SS_DIFF }}
+  REPO_IMMORTALWRT_SOURCE_LINK:             ${{ secrets.REPO_IMMORTALWRT_SOURCE_LINK }}
+  REPO_IMMORTALWRT_2410SS_TREE:             ${{ secrets.REPO_IMMORTALWRT_2410SS_TREE }}
+  REPO_IMMORTALWRT_2410SS_HEAD:             ${{ secrets.REPO_IMMORTALWRT_2410SS_HEAD }}
+  REPO_IMMORTALWRT_2410SS_DIFF:             ${{ secrets.REPO_IMMORTALWRT_2410SS_DIFF }}
   # virtual machines x64
-  VMX64_UEFI_IMWRT2410SS_PATCHES:       ${{ secrets.VMX64_UEFI_IMWRT2410SS_PATCHES }}
-  VMX64_UEFI_IMWRT2410SS_PROFILE:       ${{ secrets.VMX64_UEFI_IMWRT2410SS_PROFILE }}
-  VMX64_UEFI_IMWRT2410SS_ARCHIVE:       ${{ secrets.VMX64_UEFI_IMWRT2410SS_ARCHIVE }}
+  VIRTUAL_MACHINES_X64_IMWRT2410SS_PATCHES: ${{ secrets.VIRTUAL_MACHINES_X64_IMWRT2410SS_PATCHES }}
+  VIRTUAL_MACHINES_X64_IMWRT2410SS_PROFILE: ${{ secrets.VIRTUAL_MACHINES_X64_IMWRT2410SS_PROFILE }}
+  VIRTUAL_MACHINES_X64_IMWRT2410SS_ARCHIVE: ${{ secrets.VIRTUAL_MACHINES_X64_IMWRT2410SS_ARCHIVE }}
   # token
-  GH_TOKEN:                             ${{ secrets.ACCESS_TOKEN }}
-  ACCESS_TOKEN:                         ${{ secrets.ACCESS_TOKEN }}
+  GH_TOKEN:                                 ${{ secrets.ACCESS_TOKEN }}
+  ACCESS_TOKEN:                             ${{ secrets.ACCESS_TOKEN }}
   # feeds source
-  ADD_EXTRA_SOURCE:                     ${{ secrets.ADD_EXTRA_SOURCE }}
+  ADD_EXTRA_SOURCE:                         ${{ secrets.ADD_EXTRA_SOURCE }}
   # check sha512sum
-  ACCESS_SHA512SUM:                     ${{ secrets.ACCESS_SHA512SUM }}
-  ACCESS_REPACKAGE:                     ${{ secrets.ACCESS_REPACKAGE }}
+  ACCESS_SHA512SUM:                         ${{ secrets.ACCESS_SHA512SUM }}
+  ACCESS_REPACKAGE:                         ${{ secrets.ACCESS_REPACKAGE }}
   # luci & packages repo
-  PLUGIN_REPO_SLUG:                     ${{ secrets.PLUGIN_REPO_SLUG }}
-  PLUGIN_REPO_HEAD:                     ${{ secrets.PLUGIN_REPO_HEAD }}
-  PLUGIN_REPO_FLOW:                     ${{ secrets.PLUGIN_REPO_FLOW }}
+  PLUGIN_REPO_SLUG:                         ${{ secrets.PLUGIN_REPO_SLUG }}
+  PLUGIN_REPO_HEAD:                         ${{ secrets.PLUGIN_REPO_HEAD }}
+  PLUGIN_REPO_FLOW:                         ${{ secrets.PLUGIN_REPO_FLOW }}
   # cmcc color sytle for argon
-  ARGON_THEME_VMX64:                    ${{ secrets.ARGON_THEME_VMX64 }}
+  ARGON_THEME_VMX64:                        ${{ secrets.ARGON_THEME_VMX64 }}
   # telegram bot
-  TELEGRAM_BOT_KEY:                     ${{ secrets.TELEGRAM_BOT_KEY }}
-  TELEGRAM_CHAT_ID:                     ${{ secrets.TELEGRAM_CHAT_ID }}
+  TELEGRAM_BOT_KEY:                         ${{ secrets.TELEGRAM_BOT_KEY }}
+  TELEGRAM_CHAT_ID:                         ${{ secrets.TELEGRAM_CHAT_ID }}
   # hardware & repo info
-  DEVICE_NAME:                          VMX64_UEFI
-  TARGET_CHIP:                          x64
-  TARGET_DISK:                          HDD_8Gb
-  SOURCE_CODE:                          immortalwrt
-  KERNEL_VERS:                          kernel_6.6
-  OUTPUT_FILE:                          solidwrt-24.10ss-k6.6-vmx64_uefi-hdd_8g-sysupgrade
+  DEVICE_NAME:                              VIRTUAL_MACHINES_X64
+  TARGET_CHIP:                              x64
+  TARGET_DISK:                              8GB_HDD
+  SOURCE_CODE:                              immortalwrt
+  KERNEL_VERS:                              kernel_6.6
+  OUTPUT_FILE:                              solidwrt-24.10ss-k6.6-virtual_machines_x64-8gb_hdd-sysupgrade
   TZ: "Asia/Tokyo"
 
 jobs:
@@ -241,7 +241,7 @@ jobs:
     - name: Update & Install Feeds (フィードの更新とインストール)
       working-directory: ./openwrt
       run: |
-        ${{ secrets.VMX64_UEFI_IMWRT2410SS_PATCHES }}
+        ${{ secrets.VIRTUAL_MACHINES_X64_IMWRT2410SS_PATCHES }}
         ${{ secrets.ADD_EXTRA_SOURCE }}
         ./scripts/feeds update -a
         rm -rf feeds/packages/lang/golang
@@ -253,7 +253,7 @@ jobs:
       working-directory: ./openwrt
       id: loadconfig
       run: |
-        ${{ secrets.VMX64_UEFI_IMWRT2410SS_PROFILE }}
+        ${{ secrets.VIRTUAL_MACHINES_X64_IMWRT2410SS_PROFILE }}
         rm -rf files
         ${{ secrets.REPO_IMMORTALWRT_2410SS_DIFF }}
         ${{ secrets.ARGON_THEME_VMX64 }}
@@ -262,7 +262,7 @@ jobs:
       if: steps.loadconfig.outcome == 'success' && (github.event.inputs.restore_config == 'true' || contains(github.event.action, 'restore_config')) && !cancelled()
       working-directory: ./openwrt
       run: |
-        ${{ secrets.VMX64_UEFI_IMWRT2410SS_ARCHIVE }}
+        ${{ secrets.VIRTUAL_MACHINES_X64_IMWRT2410SS_ARCHIVE }}
         echo "OUTPUT_FILE=solidwrt-24.10ss-k6.6-bcm2710-raspberry-pi_3b-configured-sysupgrade" >> $GITHUB_ENV
 
     - name: Download Packages (パッケージのダウンロード)
@@ -344,9 +344,9 @@ jobs:
       if: steps.compile.outcome == 'success' && !cancelled()
       run: |
         cd openwrt/bin/targets/*/*
-        ls | grep -v *sysupgrade.img.gz | xargs rm -rdf
-        mv *.img.gz ${{ env.OUTPUT_FILE }}.img.gz
-        sha512sums ${{ secrets.ACCESS_SHA512SUM }} sha512sums ${{ env.OUTPUT_FILE }}.img.gz
+        ls | grep -v *.gz | xargs rm -rdf
+        sha512sums ${{ secrets.ACCESS_SHA512SUM }} sha512sums *.gz
+        ls | grep -v sha512sums* | xargs rm -rdf
         ${{ secrets.ACCESS_REPACKAGE }} ${{ env.OUTPUT_FILE }}.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
