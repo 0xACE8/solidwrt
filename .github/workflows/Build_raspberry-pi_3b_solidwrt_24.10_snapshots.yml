@@ -347,7 +347,6 @@ jobs:
         ls | grep -v *sysupgrade.img.gz | xargs rm -rdf
         mv *.img.gz ${{ env.OUTPUT_FILE }}.img.gz
         sha512sums ${{ secrets.ACCESS_SHA512SUM }} sha512sums ${{ env.OUTPUT_FILE }}.img.gz
-        ls
         ${{ secrets.ACCESS_REPACKAGE }} ${{ env.OUTPUT_FILE }}.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
