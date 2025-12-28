@@ -263,7 +263,7 @@ jobs:
       working-directory: ./openwrt
       run: |
         ${{ secrets.VIRTUAL_MACHINES_X64_IMWRT2410SS_ARCHIVE }}
-        echo "OUTPUT_FILE=solidwrt-24.10ss-k6.6-bcm2710-raspberry-pi_3b-configured-sysupgrade" >> $GITHUB_ENV
+        echo "OUTPUT_FILE=solidwrt-24.10ss-k6.6-virtual_machines_x64-8gb_hdd-configured-sysupgrade" >> $GITHUB_ENV
 
     - name: Download Packages (パッケージのダウンロード)
       if: steps.loadconfig.outcome == 'success' && !cancelled()
