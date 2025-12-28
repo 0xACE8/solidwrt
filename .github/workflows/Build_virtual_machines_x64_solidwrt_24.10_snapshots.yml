@@ -254,7 +254,6 @@ jobs:
       id: loadconfig
       run: |
         ${{ secrets.VIRTUAL_MACHINES_X64_IMWRT2410SS_PROFILE }}
-        sed '/cpulimit/d' .config
         rm -rf files
         ${{ secrets.REPO_IMMORTALWRT_2410SS_DIFF }}
         ${{ secrets.ARGON_THEME_VMX64 }}
