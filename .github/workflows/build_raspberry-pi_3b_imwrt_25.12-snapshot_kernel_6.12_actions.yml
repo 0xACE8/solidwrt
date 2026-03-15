@@ -188,7 +188,9 @@ jobs:
         rm -rf feeds/packages/lang/golang && git clone https://github.com/sbwml/packages_lang_golang -b 26.x feeds/packages/lang/golang
         ./scripts/feeds install -a
         # device patch
+        ls ${{ env.PRIVATEPATCH }}/${{ env.TARGET_MODEL }}/${{ env.DEVICE_PATCH }}
         ${{ env.PRIVATEPATCH }}/${{ env.TARGET_MODEL }}/${{ env.DEVICE_PATCH }}
+        
 
     - name: Load Custom Configuration (カスタム設定の読み込み)
       working-directory: ./openwrt
