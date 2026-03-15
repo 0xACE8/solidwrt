@@ -14,7 +14,6 @@ name: Build raspberry-pi_3b imwrt 25.12-snapshot kernel 6.12 actions.
 on:
   workflow_dispatch:
     inputs:
-
       restore_config:
         description: 'RESTORE_BAKCONF. 🇯🇵 環境設定復元'
         type: boolean
