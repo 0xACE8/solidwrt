@@ -93,7 +93,7 @@ env:
   UPLOAD_CACHE:         ${{ github.workspace }}/${{ secrets.UP_COMPILE_CACHE }}
   DWLOAD_CACHE:         ${{ github.workspace }}/${{ secrets.DW_STORAGE_CACHE }}
   ## telegram bot
-  TGRAM_NOTIFY:         ${{ github.workspace }}/${{ secrets.PUSH_TO_TELEGRAM }}
+  TGRAM_NOTIFY:         ${{ github.workspace }}/${{ secrets.TELEGRAM_PUSH_TO }}
   TGRAM_CHATID:         ${{ secrets.TELEGRAM_CHAT_ID }}
   TGRAM_DONEID:         ${{ secrets.TELEGRAM_DONE_ID }}
   ## input status
@@ -218,7 +218,6 @@ jobs:
         find dl -size -1024c -exec rm -f {} \;
 
     - name: Compile Firmware (ファームウェアのコンパイル)
-      if: env.INPUT_KALIVE != 'true'
       working-directory: ./openwrt
       id: compile
       env:
@@ -265,12 +264,12 @@ jobs:
         ${{ env.UP_WENSHUSHU }}
 
     - name: Calculate Duration (実行時間の計算)
-      if: always() && env.INPUT_NOTIFY == 'true' && env.INPUT_KALIVE != 'true'
+      if: always() && env.INPUT_NOTIFY == 'true'
       run: |
         ${{ env.CALC_RUNTIME }} "${{ env.START_TIME }}"
 
     - name: Final Report & TG Notify (総合ステータス通知)
-      if: always() && env.INPUT_NOTIFY == 'true' && env.INPUT_KALIVE != 'true'
+      if: always() && env.INPUT_NOTIFY == 'true'
       env:
         COMP_OUTCOME: ${{ steps.compile.outcome }}
       run: |
