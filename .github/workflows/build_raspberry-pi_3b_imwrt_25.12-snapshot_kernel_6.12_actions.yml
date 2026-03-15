@@ -14,6 +14,7 @@ name: Build raspberry-pi_3b imwrt 25.12-snapshot kernel 6.12 actions.
 on:
   workflow_dispatch:
     inputs:
+
       restore_config:
         description: 'RESTORE_BAKCONF. 🇯🇵 環境設定復元'
         type: boolean
@@ -43,6 +44,13 @@ on:
 #    - cron: '0 0 1 * *'
     
 env:
+  ## hardware & repo info
+  TARGET_MODEL:         raspberry-pi_3b
+  TARGET_CHIPS:         bcm2710
+  TARGET_MEDIA:         8g_tf
+  LINUX_KERNEL:         kernel_6.12
+  OUTPUT_FILES:         solidwrt-25.12-ss-raspberry-pi_3b-8gb_tf
+  TZ: "Asia/Tokyo"
   ## github token
   GITHUB_TOKEN:         ${{ secrets.ACCESS_TOKEN }}
   ACCESS_TOKEN:         ${{ secrets.ACCESS_TOKEN }}
@@ -52,7 +60,7 @@ env:
   RUNID_NUMBER:         ${{ github.run_id }}
   PRIVATE_DATA:         ${{ secrets.SOLIDWRT_CORE }}
   ## immortalwrt source
-  GIT_REPO_URL:         https://github.com/immortalwrt/immortalwrt
+  GIT_REPO_URL:         ${{ secrets.IMMORTALWRT_LINK }}
   ## immortalwrt 25.12
   GIT_2512_REF:         openwrt-25.12
   PLUGINS_2512:         ${{ github.workspace }}/${{ secrets.PLUGINS_2512_ACE }}
@@ -71,10 +79,11 @@ env:
   FIRMWARE_ORG:         ${{ github.workspace }}/${{ secrets.ORGANIZE_FW_FILE }}
   CALC_RUNTIME:         ${{ github.workspace }}/${{ secrets.CALC_RUNING_TIME }}
   ## device configure
-  DEVICE_PATCH:         ${{ github.workspace }}/${{ secrets.DEVICE_DIFFPATCH }}
-  BUILD_CONFIG:         ${{ github.workspace }}/${{ secrets.BUILD_DIFFCONFIG }}
-  BACKUP_FILES:         ${{ github.workspace }}/${{ secrets.BACKUP_CONFIGURE }}
-  ARGON_COLORS:         ${{ github.workspace }}/${{ secrets.ARGON_THEMECOLOR }}
+  PRIVATEPATCH:         ${{ github.workspace }}/${{ secrets.PRIVATE_SETPATCH }}
+  DEVICE_PATCH:         ${{ secrets.DEVICE_DIFFPATCH }}
+  BUILD_CONFIG:         ${{ secrets.BUILD_DIFFCONFIG }}
+  BACKUP_FILES:         ${{ secrets.BACKUP_CONFIGURE }}
+  ARGON_COLORS:         ${{ secrets.ARGON_THEMECOLOR }}
   NEW_HW_SUPOT:         ${{ github.workspace }}/${{ secrets.HARDWARE_SUPPORT }}
   ## upload firmware
   UPTO_RELEASE:         ${{ github.workspace }}/${{ secrets.UPLOADTO_RELEASE }}
@@ -95,13 +104,7 @@ env:
   INPUT_UP_WSS:         ${{ github.event.inputs.upload_wenshushu }}
   INPUT_NOTIFY:         ${{ github.event.inputs.telegram_notify }}
   INPUT_KALIVE:         ${{ github.event_name == 'schedule' || github.event.inputs.keepalive_cache == 'true' }}
-  ## hardware & repo info
-  TARGET_MODEL:         raspberry-pi_3b
-  TARGET_CHIPS:         bcm2710
-  TARGET_MEDIA:         8g_tf
-  LINUX_KERNEL:         kernel_6.12
-  OUTPUT_FILES:         solidwrt-25.12-ss-raspberry-pi_3b-8gb_tf
-  TZ: "Asia/Tokyo"
+
 
 jobs:
   build:
@@ -185,23 +188,23 @@ jobs:
         rm -rf feeds/packages/lang/golang && git clone https://github.com/sbwml/packages_lang_golang -b 26.x feeds/packages/lang/golang
         ./scripts/feeds install -a
         # device patch
-        ${{ env.DEVICE_PATCH }}
+        ${{ env.PRIVATEPATCH }}/${{ env.TARGET_MODEL }}/${{ env.DEVICE_PATCH }}
 
     - name: Load Custom Configuration (カスタム設定の読み込み)
       working-directory: ./openwrt
       id: loadconfig
       run: |
-        cp -rf ${{ env.BUILD_CONFIG }} .config
+        cp -rf ${{ env.PRIVATEPATCH }}/${{ env.TARGET_MODEL }}/${{ env.BUILD_CONFIG }} .config
         # immortalwrt patch
         ${{ env.PATCH_IM2512 }}
         # change argon style
-        ${{ env.ARGON_COLORS }}
+        ${{ env.PRIVATEPATCH }}/${{ env.TARGET_MODEL }}/${{ env.ARGON_COLORS }}
 
     - name: Restore Config Archive (設定アーカイブの復元)
       if: steps.loadconfig.outcome == 'success' && env.INPUT_CONFIG == 'true'
       working-directory: ./openwrt
       run: |
-        mv ${{ env.BACKUP_FILES }} files
+        mv ${{ env.PRIVATEPATCH }}/${{ env.TARGET_MODEL }}/${{ env.BACKUP_FILES }} files
         echo "OUTPUT_FILES=$OUTPUT_FILES-configured" >> $GITHUB_ENV
 
     - name: Download Packages (パッケージのダウンロード)
@@ -222,7 +225,7 @@ jobs:
         export CARGO_PROFILE_RELEASE_OPT_LEVEL: "3"
         export CARGO_PROFILE_RELEASE_LTO: "true"
         export CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "1"
-        export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS: "-C target-cpu=cortex-a53 -C target-feature=+crypto,+crc,+neon"
+        # export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS: "-C target-cpu=cortex-a53 -C target-feature=+crypto,+crc,+neon"
       run: |
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 V=s
@@ -235,8 +238,8 @@ jobs:
         cd ${{ github.workspace }}/openwrt/bin/targets/*/*
         ${{ env.FIRMWARE_ORG }}
         # generate release_body.txt
-        cd ${{ github.workspace }}
-        ${{ env.UPTO_RELEASE }}/openwrt
+        cd ${{ github.workspace }}/openwrt
+        ${{ env.UPTO_RELEASE }}
 
     - name: Upload to Artifacts (Artifactに保存)
       if: steps.organize.outcome == 'success' && env.INPUT_UP_ART == 'true'
@@ -288,3 +291,4 @@ jobs:
         keep_latest: 2
         delete_tags: true
         delete_tag_pattern: "${{ env.TARGET_MODEL }}_${{ env.GIT_2512_REF }}" 
+
