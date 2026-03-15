@@ -49,7 +49,7 @@ env:
   TARGET_CHIPS:         x86_64
   TARGET_MEDIA:         4g_ssd
   LINUX_KERNEL:         kernel_6.12
-  OUTPUT_FILES:         solidwrt-25.12-ss-virtual_machines_x64-8gb_ssd
+  OUTPUT_FILES:         solidwrt-25.12-ss-virtual_machines_x64-4gb_ssd
   TZ: "Asia/Tokyo"
   ## github token
   GITHUB_TOKEN:         ${{ secrets.ACCESS_TOKEN }}
@@ -58,9 +58,9 @@ env:
   RUN_REF_NAME:         ${{ github.ref_name }}
   RUN_REF_REPO:         ${{ github.repository }}
   RUNID_NUMBER:         ${{ github.run_id }}
-  PRIVATE_DATA:         ${{ secrets.SOLIDWRT_CORE }}
+  PRIVATE_DATA:         ${{ secrets.SOLIDWRT_DATCORE }}
   ## immortalwrt source
-  GIT_REPO_URL:         https://github.com/immortalwrt/immortalwrt
+  GIT_REPO_URL:         ${{ secrets.IMMORTALWRT_LINK }}
   ## immortalwrt 25.12
   GIT_2512_REF:         openwrt-25.12
   PLUGINS_2512:         ${{ github.workspace }}/${{ secrets.PLUGINS_2512_ACE }}
