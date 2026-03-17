@@ -59,6 +59,7 @@ env:
   RUN_REF_REPO:         ${{ github.repository }}
   RUNID_NUMBER:         ${{ github.run_id }}
   PRIVATE_DATA:         ${{ secrets.SOLIDWRT_DATCORE }}
+  FIRMWARE_SHA:         ${{ secrets.FIREMWARE_SHA512 }}
   ## immortalwrt source
   GIT_REPO_URL:         ${{ secrets.IMMORTALWRT_LINK }}
   ## immortalwrt 25.12
@@ -76,6 +77,8 @@ env:
   INIT_ENV_VAR:         ${{ github.workspace }}/${{ secrets.INIT_ENVIRONMENT }}
   REMOV_CN_SRC:         ${{ github.workspace }}/${{ secrets.REMOVE_CN_SOURCE }}
   EXPAND_SPACE:         ${{ github.workspace }}/${{ secrets.FREE_DISKS_SPACE }}
+  GET_KER_VERS:         ${{ github.workspace }}/${{ secrets.GET_KER_PATCHVER }}
+  LANGS_UPDATE:         ${{ github.workspace }}/${{ secrets.PAK_LANGS_UPDATE }}
   FIRMWARE_ORG:         ${{ github.workspace }}/${{ secrets.ORGANIZE_FW_FILE }}
   CALC_RUNTIME:         ${{ github.workspace }}/${{ secrets.CALC_RUNING_TIME }}
   ## device configure
@@ -168,6 +171,8 @@ jobs:
         ${{ env.REMOV_CN_SRC }}
         # add feeds repo
         ${{ env.FEEDS_IM2512 }}
+        # get kernel version
+        ${{ env.GET_KER_VERS }}
         # add new env
         echo "CACHE_TAG_ID=cache-${OUTPUT_FILES}" >> $GITHUB_ENV
 
@@ -184,8 +189,8 @@ jobs:
         # add hardware driver
         ${{ env.NEW_HW_SUPOT }}
         ./scripts/feeds update -a
-        rm -rf feeds/packages/lang/rust && git clone https://github.com/0xACE8/packages_lang_rust feeds/packages/lang/rust
-        rm -rf feeds/packages/lang/golang && git clone https://github.com/sbwml/packages_lang_golang -b 26.x feeds/packages/lang/golang
+        # packages lang update (rust and goland)
+        ${{ env.LANGS_UPDATE }}
         ./scripts/feeds install -a
         # device patch
         ${{ env.PRIVATEPATCH }}/${{ env.TARGET_MODEL }}/${{ env.DEVICE_PATCH }}
