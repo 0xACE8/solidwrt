@@ -19,10 +19,6 @@ on:
         description: 'RESTORE_BAKCONF. 🇯🇵 環境設定復元'
         type: boolean
         default: true
-      #boost_wifi_5g:
-      #  description: 'BOOST_WIFI5G_SG. 🇯🇵 ５Ｇ信号増幅'
-      #  type: boolean
-      #  default: false
       upload_firmware:
         description: 'UPLOAD_ARTIFACT. 🇯🇵 成果物の保存'
         type: boolean
@@ -39,16 +35,13 @@ on:
         description: 'TELEGRAM_NOTIFY. 🇯🇵 ＴＧ通知送信'
         type: boolean
         default: true
-#  schedule:
-#    - cron: '0 2 * * 1'
-#    - cron: '0 0 1 * *'
-    
+
+
 env:
   ## hardware & repo info
   TARGET_MODEL:         virtual_machines_x64
   TARGET_CHIPS:         x86_64
   TARGET_MEDIA:         4g_ssd
-  LINUX_KERNEL:         kernel_6.12
   OUTPUT_FILES:         solidwrt-25.12-ss-virtual_machines_x64-4gb_ssd
   TZ: "Asia/Tokyo"
   ## github token
@@ -78,7 +71,7 @@ env:
   REMOV_CN_SRC:         ${{ github.workspace }}/${{ secrets.REMOVE_CN_SOURCE }}
   EXPAND_SPACE:         ${{ github.workspace }}/${{ secrets.FREE_DISKS_SPACE }}
   GET_KER_VERS:         ${{ github.workspace }}/${{ secrets.GET_KER_PATCHVER }}
-  LANGS_UPDATE:         ${{ github.workspace }}/${{ secrets.PAK_LANGS_UPDATE }}
+  UPDATE_LANGS:         ${{ github.workspace }}/${{ secrets.PAK_LANGS_UPDATE }}
   FIRMWARE_ORG:         ${{ github.workspace }}/${{ secrets.ORGANIZE_FW_FILE }}
   CALC_RUNTIME:         ${{ github.workspace }}/${{ secrets.CALC_RUNING_TIME }}
   ## device configure
@@ -106,7 +99,6 @@ env:
   INPUT_UP_REL:         ${{ github.event.inputs.upload_release }}
   INPUT_UP_WSS:         ${{ github.event.inputs.upload_wenshushu }}
   INPUT_NOTIFY:         ${{ github.event.inputs.telegram_notify }}
-  INPUT_KALIVE:         ${{ github.event_name == 'schedule' || github.event.inputs.keepalive_cache == 'true' }}
 
 
 jobs:
@@ -137,12 +129,12 @@ jobs:
         repository: ${{ env.RUN_REF_REPO }}
         retain_days: 0
         keep_minimum_runs: 0
-        delete_workflow_pattern: "imwrt 25.12-snapshot kernel 6.12"
+        delete_workflow_pattern: "virtual_machines_x64 imwrt 25.12-snapshot kernel 6.12"
 
     - name: Check Server Performance (サーバー性能の確認)
       id: check_env
       run: |
-        find ${{ github.workspace }}/private_data -name "*.sh" -exec chmod +x {} +
+        find ${{ github.workspace }}/private_data -name "*.sh" -exec chmod +x {} +  >/dev/null 2>&1
         ${{ env.CHECK_SERVER }}
 
     - name: Sync and Wait for Plugin Repo (プラグインリポジトリの同期と待機)
@@ -154,7 +146,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        ${{ env.INIT_ENV_VAR }} >/dev/null 2>&1
+        ${{ env.INIT_ENV_VAR }}
 
     - name: Free Disk Space (ディスク空き容量の確保)
       run: |
@@ -186,12 +178,10 @@ jobs:
     - name: Update & Install Feeds (フィードの更新とインストール)
       working-directory: ./openwrt
       run: |
-        # add hardware driver
-        ${{ env.NEW_HW_SUPOT }}
-        ./scripts/feeds update -a
+        ./scripts/feeds update -a  >/dev/null 2>&1
         # packages lang update (rust and goland)
-        ${{ env.LANGS_UPDATE }}
-        ./scripts/feeds install -a
+        ${{ env.UPDATE_LANGS }}
+        ./scripts/feeds install -a  >/dev/null 2>&1
         # device patch
         ${{ env.PRIVATEPATCH }}/${{ env.TARGET_MODEL }}/${{ env.DEVICE_PATCH }}
 
@@ -295,4 +285,3 @@ jobs:
         keep_latest: 2
         delete_tags: true
         delete_tag_pattern: "${{ env.TARGET_MODEL }}_${{ env.GIT_2512_REF }}" 
-
