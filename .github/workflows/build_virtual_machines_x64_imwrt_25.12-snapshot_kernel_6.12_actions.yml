@@ -174,10 +174,7 @@ jobs:
         GH_TOKEN: ${{ env.ACCESS_TOKEN }}
       run: |
         ${{ env.DWLOAD_CACHE }}
-        ls -al
-        echo "2"
-        ls -al dl
-        exit 1
+        find . -path "*/dl/go-mod-*" -exec rm -rf {} + 2>/dev/null || true
 
     - name: Update & Install Feeds (フィードの更新とインストール)
       working-directory: ./openwrt
