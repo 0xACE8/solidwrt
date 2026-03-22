@@ -40,7 +40,7 @@ on:
 env:
   ## hardware & repo info
   TARGET_MODEL:         rk3318-box
-  TARGET_CHIPS:         rk3318
+  TARGET_CHIPS:         rockchip
   TARGET_MEDIA:         4g_emmc
   OUTPUT_FILES:         solidwrt-25.12-ss-rk3318-box-4gb_ssd
   TZ: "Asia/Tokyo"
