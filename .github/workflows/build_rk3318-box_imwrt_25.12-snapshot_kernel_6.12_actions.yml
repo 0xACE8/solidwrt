@@ -128,7 +128,7 @@ jobs:
         repository: ${{ env.RUN_REF_REPO }}
         retain_days: 0
         keep_minimum_runs: 0
-        delete_workflow_pattern: "h96-max imwrt 25.12-snapshot kernel 6.12"
+        delete_workflow_pattern: "rk3318-box imwrt 25.12-snapshot kernel 6.12"
 
     - name: Check Server Performance (サーバー性能の確認)
       id: check_env
