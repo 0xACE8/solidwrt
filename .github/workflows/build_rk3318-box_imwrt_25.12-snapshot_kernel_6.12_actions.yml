@@ -270,7 +270,7 @@ jobs:
       uses: softprops/action-gh-release@v2.6.1
       with:
         token: ${{ env.ACCESS_TOKEN }}
-        working_directory: ${{ github.workspace }}/openwrt/output/
+        working_directory: $PACKAGED_OUTPUTPATH
         tag_name: ${{ env.TAG_NAME }}
         name: ${{ env.TARGET_CHIPS }}_${{ env.TARGET_MODEL }}_${{ env.TARGET_MEDIA }}_${{ env.LINUX_KERNEL }}_${{ env.FILE_DATE }}
         files: ${{ env.FIRMWARE }}/*
