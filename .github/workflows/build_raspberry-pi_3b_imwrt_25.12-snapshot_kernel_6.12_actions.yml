@@ -185,8 +185,6 @@ jobs:
     - name: Update & Install Feeds (フィードの更新とインストール)
       working-directory: ./openwrt
       run: |
-        # add hardware driver
-        ${{ env.NEW_HW_SUPOT }}
         ./scripts/feeds update -a
         # packages lang update (rust and goland)
         ${{ env.LANGS_UPDATE }}
