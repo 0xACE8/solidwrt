@@ -192,14 +192,6 @@ jobs:
         # device patch
         ${{ env.PRIVATEPATCH }}/${{ env.TARGET_MODEL }}/${{ env.DEVICE_PATCH }}
 
-    - name: Fix download.pl for Prebuilt Binaries
-      run: |
-          # 1. 强制给 curl 加上浏览器 User-Agent，防止被 GitHub Release 识别为 Bot 并返回 HTML 拦截页
-          sed -i 's|curl -f|curl -f -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" -L|g' scripts/download.pl
-          
-          # 2. 如果系统使用的是 wget，同样注入 User-Agent
-          sed -i 's|wget --passport-file|wget --user-agent="Mozilla/5.0" --passport-file|g' scripts/download.pl || true
-
     - name: Load Custom Configuration (カスタム設定の読み込み)
       working-directory: ./openwrt
       id: loadconfig
