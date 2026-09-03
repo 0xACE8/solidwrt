@@ -290,6 +290,6 @@ jobs:
       uses: freenet-actions/delete-old-releases@v3.0.0
       with:
         keep-latest-releases: 2
-        delete_tags: true
+        delete-tags: true
         regex: "${{ env.TARGET_MODEL }}_${{ env.GIT_2512_REF }}" 
 
