@@ -68,9 +68,9 @@ env:
   FEEDS_IM2512:         ${{ github.workspace }}/${{ secrets.ADD_FEEDS_IM2512 }}
   ## immortalwrt 24.10
   GIT_2410_REF:         openwrt-24.10
-  PLUGINS_2410:         ${{ github.workspace }}/${{ secrets.PLUGINS_2410_ACE }}
+  PLUGINS_2410:         ${{ github.workspace }}/${{ secrets.PLUGINS_2512_ACE }}
   PATCH_IM2410:         ${{ github.workspace }}/${{ secrets.SRC_PATCH_IM2410 }}
-  FEEDS_IM2410:         ${{ github.workspace }}/${{ secrets.ADD_FEEDS_IM2410 }}
+  FEEDS_IM2410:         ${{ github.workspace }}/${{ secrets.ADD_FEEDS_IM2512 }}
   ## github ci scripts
   CHECK_SERVER:         ${{ github.workspace }}/${{ secrets.TEST_SERVER_PERF }}
   INIT_ENV_VAR:         ${{ github.workspace }}/${{ secrets.INIT_ENVIRONMENT }}
@@ -164,7 +164,7 @@ jobs:
       working-directory: ./
       run: |
         df -hT /build
-        git clone --depth 1 --single-branch $GIT_REPO_URL -b $GIT_2512_REF openwrt
+        git clone --depth 1 --single-branch $GIT_2410_REF -b $ openwrt
         
         # Remove China Mirrors (中国ソースの削除)
         ${{ env.REMOV_CN_SRC }}
@@ -291,4 +291,4 @@ jobs:
       with:
         keep-latest-releases: 2
         delete-tags: true
-        regex: "${{ env.TARGET_MODEL }}_${{ env.GIT_2512_REF }}" 
+        regex: "${{ env.TARGET_MODEL }}_${{ env.GIT_2410_REF }}" 
