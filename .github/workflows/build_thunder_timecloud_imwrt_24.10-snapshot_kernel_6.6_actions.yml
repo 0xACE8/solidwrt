@@ -9,7 +9,7 @@
 # 説明: GitHub Actionsのモジュール化を活用し、プライバシーとセキュリティを確保したOpenWrtビルド。
 #
 
-name: Build thunder_timecloud imwrt 25.12-snapshot kernel 6.12 actions.
+name: Build thunder_timecloud imwrt 24.10-snapshot kernel 6.6 actions.
 
 on:
   workflow_dispatch:
