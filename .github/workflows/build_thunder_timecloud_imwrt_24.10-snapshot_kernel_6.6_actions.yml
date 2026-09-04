@@ -164,7 +164,7 @@ jobs:
       working-directory: ./
       run: |
         df -hT /build
-        git clone --depth 1 --single-branch $GIT_2410_REF -b $ openwrt
+        git clone --depth 1 --single-branch $GIT_REPO_URL -b $GIT_2410_REF openwrt
         
         # Remove China Mirrors (中国ソースの削除)
         ${{ env.REMOV_CN_SRC }}
