@@ -48,7 +48,7 @@ env:
   TARGET_MODEL:         thunder-timecloud
   TARGET_CHIPS:         mt7621
   TARGET_MEDIA:         16mb
-  OUTPUT_FILES:         solidwrt-25.12-thunder-timecloud_16mb
+  OUTPUT_FILES:         solidwrt-24.10-thunder-timecloud_16mb
   TZ: "Asia/Tokyo"
   ## github token
   GITHUB_TOKEN:         ${{ secrets.ACCESS_TOKEN }}
