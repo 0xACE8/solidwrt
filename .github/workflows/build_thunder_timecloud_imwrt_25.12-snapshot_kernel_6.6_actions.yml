@@ -237,6 +237,7 @@ jobs:
       id: organize
       run: |
         cd ${{ github.workspace }}/openwrt/bin/targets/*/*
+        ls
         ${{ env.FIRMWARE_ORG }}
         # generate release_body.txt
         cd ${{ github.workspace }}/openwrt
