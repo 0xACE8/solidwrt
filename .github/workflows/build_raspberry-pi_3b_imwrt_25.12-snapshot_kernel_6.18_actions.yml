@@ -9,7 +9,7 @@
 # 説明: GitHub Actionsのモジュール化を活用し、プライバシーとセキュリティを確保したOpenWrtビルド。
 #
 
-name: Build raspberry-pi_3b imwrt 25.12-snapshot kernel 6.12 actions.
+name: Build raspberry-pi_3b imwrt 25.12-snapshot kernel 6.18 actions.
 
 on:
   workflow_dispatch:
@@ -47,8 +47,8 @@ env:
   ## hardware & repo info
   TARGET_MODEL:         raspberry-pi_3b
   TARGET_CHIPS:         bcm2710
-  TARGET_MEDIA:         8g_tf
-  OUTPUT_FILES:         solidwrt-25.12-ss-raspberry-pi_3b-8gb_tf
+  TARGET_MEDIA:         2g_tf
+  OUTPUT_FILES:         solidwrt-25.12-ss-raspberry-pi_3b-2gb_tf
   TZ: "Asia/Tokyo"
   ## github token
   GITHUB_TOKEN:         ${{ secrets.ACCESS_TOKEN }}
@@ -62,7 +62,7 @@ env:
   ## immortalwrt source
   GIT_REPO_URL:         ${{ secrets.IMMORTALWRT_LINK }}
   ## immortalwrt 25.12
-  GIT_2512_REF:         openwrt-25.12
+  GIT_REPO_REF:         master
   PLUGINS_2512:         ${{ github.workspace }}/${{ secrets.PLUGINS_2512_ACE }}
   PATCH_IM2512:         ${{ github.workspace }}/${{ secrets.SRC_PATCH_IM2512 }}
   FEEDS_IM2512:         ${{ github.workspace }}/${{ secrets.ADD_FEEDS_IM2512 }}
@@ -164,7 +164,7 @@ jobs:
       working-directory: ./
       run: |
         df -hT /build
-        git clone --depth 1 --single-branch $GIT_REPO_URL -b $GIT_2512_REF openwrt
+        git clone --depth 1 --single-branch $GIT_REPO_URL -b $GIT_REPO_REF openwrt
         
         # Remove China Mirrors (中国ソースの削除)
         ${{ env.REMOV_CN_SRC }}
@@ -291,5 +291,5 @@ jobs:
       with:
         keep-latest-releases: 2
         delete-tags: true
-        regex: "${{ env.TARGET_MODEL }}_${{ env.GIT_2512_REF }}" 
+        regex: "${{ env.TARGET_MODEL }}_${{ env.GIT_REPO_REF }}" 
 
